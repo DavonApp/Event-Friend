@@ -5,10 +5,21 @@ class Preferences {
     this.distance = distance;     // int
   }
 
-  updatePreferences({ eventTypes, ageRange, distance }) {
-    if (eventTypes) this.eventTypes = eventTypes;
-    if (ageRange) this.ageRange = ageRange;
-    if (distance) this.distance = distance;
+  toFirestoreObject() {
+    return {
+      eventTypes: this.eventTypes,
+      ageRange: this.ageRange,
+      distance: this.distance
+    };
+  }
+
+  // converts the firestore document to a JS object
+  static fromFirestore(data) {
+    return new Preferences({
+      eventTypes: data.eventTypes || [],
+      ageRange: data.ageRange || '',
+      distance: data.distance || 0
+    });
   }
 }
 
