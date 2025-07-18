@@ -19,11 +19,6 @@ const app = express();
 app.use(cors());
 app.use(helmet());
 
-// Test backend
-app.get("/", (req, res) => {
-    res.send("Hello from Event Friend backend!");
-});
-
 // Get /events
 app.get("/events", (req, res) => {
     const mockEvents = [
@@ -96,6 +91,59 @@ app.get("/events", (req, res) => {
     ];
         res.json({ events: mockEvents, pagination: {page_number: 1, page_count: 1}});
     });
+    // POST new event
+    app.post("/events", async (req, res) => {
+      try {
+        const event = req.body;
+        const docRef = await db.collection("events").add(event);
+        res.status(201).json({id: docRef.id});
+      } catch(error) {
+        res.status(500).send("Error adding event")
+      }
+    });
+    // GET event by ID
+    app.get("/events/:id", async (req, res) =>{
+      try {
+        const eventId = req.params.id;
+        const doc = await db.collection("events").doc(eventId).get();
+
+        if (!doc.exists) {
+          return res.status(404).send("Event not found");
+        }
+        res.status(200).json({id: doc.id, ...doc.data()});
+        } catch (error) {
+          res.status(500).send("Error finding event"); 
+      }
+    });
+    // POST mark interest in event
+    app.post("/events/:id/interest", async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const { uid } = req.body;
+
+        // Save to subcollection inside user document
+        await db.collection("users").doc(uid)
+          .collection("interestedEvents").doc(eventId)
+          .set({ timestamp: admin.firestore.FieldValue.serverTimestamp() });
+
+        res.status(200).send("Interest marked");
+      } catch (error) {
+        res.status(500).send("Error marking interest");
+      }
+    });
+    // GET user's interested events  
+    app.get("/users/:uid/interested", async (req, res) => {
+      try {
+        const { uid } = req.params;
+        const snapshot = await db.collection("users")
+          .doc(uid).collection("interestedEvents").get();
+
+        const eventIds = snapshot.docs.map(doc => doc.id);
+        res.status(200).json({ interestedEventIds: eventIds });
+      } catch (error) {
+        res.status(500).send("Error fetching user's interested events");
+      }
+    });
     // POST /users (create new profile after signup)
 app.post("/users", async (req, res) => {
   const { uid, username, email, bio, interests = [] } = req.body;
@@ -111,6 +159,31 @@ app.get("/users/:uid", async (req, res) => {
   const snap = await db.collection("users").doc(req.params.uid).get();
   if (!snap.exists) return res.status(404).json({ error: "User not found" });
   res.json(snap.data());
+});
+// PUT update user profile
+app.put("/users/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params;
+    await db.collection("users").doc(uid).update(req.body);
+    res.status(200).send("User updated");
+  } catch (error) {
+    res.status(500).send("Error updating user");
+  }
+});
+// PUT update user preferences
+app.put("/users/:uid/preferences", async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const preferences = req.body;
+
+    await db.collection("users").doc(uid).update({
+      preferences: preferences
+    });
+
+    res.status(200).send("Preferences updated");
+  } catch (error) {
+    res.status(500).send("Error updating preferences");
+  }
 });
 // POST /events/:eventId/interest   { uid: "abc123", interested: true|false }
 app.post("/events/:eventId/interest", async (req, res) => {
