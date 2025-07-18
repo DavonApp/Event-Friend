@@ -89,8 +89,20 @@ app.get("/events", (req, res) => {
             category: "sport"
         }
     ];
-        res.json({ events: mockEvents, pagination: {page_number: 1, page_count: 1}});
+
+    let filteredEvents = mockEvents;
+    if (category) {
+      filteredEvents = mockEvents.filter(e => e.category === category);
+    }
+
+    res.json({
+      events: filteredEvents,
+      pagination: {
+        page_number: 1,
+        page_count: 1
+      }
     });
+  });
     // POST new event
     app.post("/events", async (req, res) => {
       try {
@@ -233,13 +245,6 @@ app.get("/connections/:connId/messages", async (req, res) => {
                        .orderBy("sentAt","asc")
                        .get();
   res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-});
-// GET /events?category=music
-app.get("/events", (req, res) => {
-  const { category } = req.query;
-  let events = mockEvents;            // reuse your mock array
-  if (category) events = events.filter(e => e.category === category);
-  res.json({ events });
 });
 
 
