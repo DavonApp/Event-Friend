@@ -250,3 +250,6 @@ app.get("/connections/:connId/messages", async (req, res) => {
 
 // Export Express app as a Firebase HTTPS Cloud Function
 export const api = functions.https.onRequest(app);
+
+// Allows use of db in other files
+module.exports = db;
