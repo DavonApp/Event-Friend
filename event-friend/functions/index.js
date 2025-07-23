@@ -21,88 +21,60 @@ app.use(helmet());
 
 // Get /events
 app.get("/events", (req, res) => {
-    const mockEvents = [
-        {
-            id: "1",
-            name: "Basketball Tournament",
-            start: "2025-08-12T18:00:00",
-            url: "https://example.com/events/1",
-            image: "https://via.placeholder.com/300x150.png?text=Sports+Event",
-            venue: "Mercedes Benz Stadium",
-            city: "Atlanta",
-            is_free: true,
-            category: "sports"
-        },
-        {
-            id: "2",
-            name: "Live Music Festival",
-            start: "2025-08-15T20:00:00",
-            url: "https://example.com/events/2",
-            image: "https://via.placeholder.com/300x150.png?text=Music+Festival",
-            venue: "Piedmont Park",
-            city: "Atlanta",
-            is_free: false,
-            category: "music"
-        },
-        {
-            id: "3",
-            name: "Firework Fest Atlanta",
-            start: "2025-09-12T16:00:00",
-            url: "https://example.com/events/3",
-            image: "https://via.placeholder.com/300x150.png?text=Firework+Fest",
-            venue: "Lenox Square",
-            city: "Atlanta",
-            is_free: true,
-            category: "entertainment"
-        },
-        {
-            id: "4",
-            name: "AI & Tech Networking Atlanta",
-            start: "2025-10-15T15:00:00",
-            url: "https://example.com/events/4",
-            image: "https://via.placeholder.com/300x150.png?text=AI+Tech+Networking",
-            venue: "Kennesaw State University Kennesaw Campus",
-            city: "Kennesaw",
-            is_free: true,
-            category: "social"
-        },
-        {
-            id: "5",
-            name: "Film & Music Dinner",
-            start: "2025-07-3T14:00:00",
-            url: "https://example.com/events/5",
-            image: "https://via.placeholder.com/300x150.png?text=Film+Music+Dinner",
-            venue: "Fox Theatre",
-            city: "Atlanta",
-            is_free: false,
-            category: "social"
-        },
-        {
-            id: "6",
-            name: "Annual Soccer Event",
-            start: "2025-07-14T12:00:00",
-            url: "https://example.com/events/6",
-            image: "https://via.placeholder.com/300x150.png?text=Annual+Soccer",
-            venue: "Kennesaw State University Kennesaw Campus",
-            city: "Kennesaw",
-            is_free: true,
-            category: "sport"
-        }
-    ];
+  const category = req.query.category; // Get ?category=something from the URL
 
-    let filteredEvents = mockEvents;
-    if (category) {
-      filteredEvents = mockEvents.filter(e => e.category === category);
+  // Mock events
+  const mockEvents = [
+    {
+      id: "1",
+      name: "Food Festival",
+      description: "A great food event!",
+      category: "Food",
+      date: "2025-07-25",
+      location: "New York City"
+    },
+    {
+      id: "2",
+      name: "Tech Meetup",
+      description: "Meet fellow developers.",
+      category: "Tech",
+      date: "2025-07-30",
+      location: "San Francisco"
+    },
+    {
+      id: "3",
+      name: "Music Bash",
+      description: "Live music from top artists.",
+      category: "Music",
+      date: "2025-08-10",
+      location: "Los Angeles"
+    },
+    {
+      id: "4",
+      name: "Art Show",
+      description: "See amazing artwork.",
+      category: "Art",
+      date: "2025-08-20",
+      location: "Chicago"
     }
+  ];
 
-    res.json({
-      events: filteredEvents,
-      pagination: {
-        page_number: 1,
-        page_count: 1
-      }
-    });
+  // Filter by category if provided
+  let filteredEvents = mockEvents;
+  if (category) {
+    filteredEvents = mockEvents.filter(e => e.category.toLowerCase() === category.toLowerCase());
+  }
+
+  // Send back the mock data
+  res.json({
+    events: filteredEvents,
+    pagination: {
+      page_number: 1,
+      page_count: 1
+    }
   });
+});
+
     // POST new event
     app.post("/events", async (req, res) => {
       try {
