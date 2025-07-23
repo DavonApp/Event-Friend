@@ -127,22 +127,6 @@ app.get("/events", (req, res) => {
           res.status(500).send("Error finding event"); 
       }
     });
-    // POST mark interest in event
-    app.post("/events/:id/interest", async (req, res) => {
-      try {
-        const eventId = req.params.id;
-        const { uid } = req.body;
-
-        // Save to subcollection inside user document
-        await db.collection("users").doc(uid)
-          .collection("interestedEvents").doc(eventId)
-          .set({ timestamp: admin.firestore.FieldValue.serverTimestamp() });
-
-        res.status(200).send("Interest marked");
-      } catch (error) {
-        res.status(500).send("Error marking interest");
-      }
-    });
     // GET user's interested events  
     app.get("/users/:uid/interested", async (req, res) => {
       try {
