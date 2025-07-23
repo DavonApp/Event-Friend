@@ -25,39 +25,56 @@ app.get("/events", (req, res) => {
 
   // Mock events
   const mockEvents = [
-    {
-      id: "1",
-      name: "Food Festival",
-      description: "A great food event!",
-      category: "Food",
-      date: "2025-07-25",
-      location: "New York City"
-    },
-    {
-      id: "2",
-      name: "Tech Meetup",
-      description: "Meet fellow developers.",
-      category: "Tech",
-      date: "2025-07-30",
-      location: "San Francisco"
-    },
-    {
-      id: "3",
-      name: "Music Bash",
-      description: "Live music from top artists.",
-      category: "Music",
-      date: "2025-08-10",
-      location: "Los Angeles"
-    },
-    {
-      id: "4",
-      name: "Art Show",
-      description: "See amazing artwork.",
-      category: "Art",
-      date: "2025-08-20",
-      location: "Chicago"
-    }
-  ];
+  {
+    id: "1",
+    name: "Food Festival",
+    description: "A great food event!",
+    category: "Food",
+    date: "2025-07-25",
+    location: "New York City",
+    start: "2025-07-25T12:00:00",
+    city: "New York",
+    venue: "Central Park",
+    image: "https://source.unsplash.com/400x300/?food"
+  },
+  {
+    id: "2",
+    name: "Tech Meetup",
+    description: "Meet fellow developers.",
+    category: "Tech",
+    date: "2025-07-30",
+    location: "San Francisco",
+    start: "2025-07-30T18:00:00",
+    city: "San Francisco",
+    venue: "SF Conference Center",
+    image: "https://source.unsplash.com/400x300/?technology"
+  },
+  {
+    id: "3",
+    name: "Music Bash",
+    description: "Live music from top artists.",
+    category: "Music",
+    date: "2025-08-10",
+    location: "Los Angeles",
+    start: "2025-08-10T20:00:00",
+    city: "Los Angeles",
+    venue: "LA Stadium",
+    image: "https://source.unsplash.com/400x300/?concert"
+  },
+  {
+    id: "4",
+    name: "Art Show",
+    description: "See amazing artwork.",
+    category: "Art",
+    date: "2025-08-20",
+    location: "Chicago",
+    start: "2025-08-20T10:00:00",
+    city: "Chicago",
+    venue: "Art Institute of Chicago",
+    image: "https://source.unsplash.com/400x300/?art"
+  }
+];
+
 
   // Filter by category if provided
   let filteredEvents = mockEvents;
