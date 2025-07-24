@@ -159,22 +159,34 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// GET /users/:uid - get user info from Firebase Auth (no Firestore here)
+// GET /users/:uid - get user profile from Firestore
 app.get("/users/:uid", async (req, res) => {
   try {
-    const uid = req.params.uid;
-    const userRecord = await auth.getUser(uid); // get user from Firebase Auth
+    const { uid } = req.params;
 
-    res.json({
-      username: userRecord.displayName || "",
-      email: userRecord.email || "",
-      city: "",
-      bio: "",
-      interests: [],
+    // 1. Get the user's document from the 'users' collection in Firestore
+    const userDoc = await db.collection("users").doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User profile not found in Firestore." });
+    }
+
+    // 2. Get the data from the document
+    const userData = userDoc.data();
+
+    // 3. Send the complete user data as the response
+    res.status(200).json({
+      username: userData.username || "",
+      email: userData.email || "",
+      bio: userData.bio || "",
+      interests: userData.interests || [],
+      // Assuming you might add a 'city' field later
+      city: userData.city || "",
     });
+
   } catch (error) {
-    console.error("Error fetching user from Firebase Auth:", error);
-    res.status(404).json({ error: "User not found" });
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ error: "Failed to fetch user profile" });
   }
 });
 
