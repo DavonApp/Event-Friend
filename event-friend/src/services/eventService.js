@@ -1,5 +1,5 @@
 const db = require('functions/index')
-const Event = require('./event')
+const Event = require('../classes/event')
 
 class EventService {
   static async fetchEvents() {
